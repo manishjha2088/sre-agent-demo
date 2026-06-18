@@ -9,53 +9,43 @@
 
     <!-- Application Insights -->
     <script type="text/javascript">
-    var appInsights=window.appInsights||function(config){
-        function r(config){
-            t[config]=function(){
-                var i=arguments;
-                t.queue.push(function(){
-                    t[config].apply(t,i)
-                })
-            }
+    var appInsights = window.appInsights || function (config) {
+        function r(method) {
+            t[method] = function () {
+                var args = arguments;
+                t.queue.push(function () {
+                    t[method].apply(t, args);
+                });
+            };
         }
 
-        var t={config:config},
-            u=document,
-            o="script",
-            s=u.createElement(o),
-            i,f;
+        var t = { config: config },
+            u = document,
+            s = u.createElement("script"),
+            i;
 
-        s.src="https://js.monitor.azure.com/scripts/b/ai.3.gbl.min.js";
+        s.src = "https://js.monitor.azure.com/scripts/b/ai.3.gbl.min.js";
+        u.getElementsByTagName("head")[0].appendChild(s);
 
-        u.getElementsByTagName(o)[0].parentNode.appendChild(s);
+        t.queue = [];
 
-        t.cookie=u.cookie;
-        t.queue=[];
-
-        for(
-            i=[
-                "trackPageView",
-                "trackEvent",
-                "trackException",
-                "trackTrace",
-                "trackMetric"
-            ],
-            f=0;
-            f<i.length;
-            f++
-        ){
-            r(i[f]);
+        for (
+            i = 0;
+            i < ["trackEvent", "trackPageView", "trackException", "trackTrace", "trackMetric"].length;
+            i++
+        ) {
+            r(["trackEvent", "trackPageView", "trackException", "trackTrace", "trackMetric"][i]);
         }
 
         return t;
     }({
-        connectionString:"InstrumentationKey=da38877b-8f01-4311-8e30-476bae1786d4;IngestionEndpoint=https://eastus-8.in.applicationinsights.azure.com/;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/;ApplicationId=7b559f12-0975-436d-88bc-978bdb5a4efc"
+        connectionString: "InstrumentationKey=da38877b-8f01-4311-8e30-476bae1786d4;IngestionEndpoint=https://eastus-8.in.applicationinsights.azure.com/;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/;ApplicationId=7b559f12-0975-436d-88bc-978bdb5a4efc"
     });
 
     window.appInsights = appInsights;
 
     appInsights.trackPageView({
-        name: "SRE Agent Demo Home"
+        name: "Azure SRE Agent Demo"
     });
     </script>
 
@@ -83,7 +73,7 @@
 
     <div class="card">
         <h2>Deployment Platform</h2>
-        <p>GitHub Pages</p>
+        <p>Azure Static Web Apps</p>
     </div>
 
     <div class="card">
@@ -94,6 +84,41 @@
             <li>Grafana Cloud</li>
             <li>Azure SRE Agent</li>
         </ul>
+    </div>
+
+    <div class="card">
+        <h2>Architecture Flow</h2>
+        <pre>
+Developer
+   ↓
+GitHub Repository
+   ↓
+GitHub Actions
+   ↓
+Azure Static Web App
+   ↓
+Application Insights
+   ↓
+Azure Monitor
+   ↓
+Grafana Cloud
+   ↓
+Azure SRE Agent
+        </pre>
+    </div>
+
+    <div class="card">
+        <h2>SRE Incident Scenario</h2>
+        <ol>
+            <li>Developer deploys code</li>
+            <li>GitHub Actions deploys application</li>
+            <li>Application Insights captures telemetry</li>
+            <li>Azure Monitor detects anomaly</li>
+            <li>Azure SRE Agent investigates</li>
+            <li>Root Cause Analysis generated</li>
+            <li>Rollback recommended</li>
+            <li>Service restored</li>
+        </ol>
     </div>
 
 </div>
@@ -108,7 +133,8 @@ if (window.appInsights) {
         properties: {
             version: "1.0.0",
             environment: "Production",
-            platform: "GitHub Pages",
+            platform: "Azure Static Web Apps",
+            sourceControl: "GitHub",
             monitoring: "Application Insights"
         }
     });
