@@ -9,44 +9,47 @@
 
     <!-- Application Insights -->
     <script type="text/javascript">
-    var appInsights = window.appInsights || function (config) {
-        function r(method) {
-            t[method] = function () {
-                var args = arguments;
-                t.queue.push(function () {
-                    t[method].apply(t, args);
-                });
-            };
-        }
+        var appInsights = window.appInsights || function (config) {
+            function createMethod(name) {
+                appInsights[name] = function () {
+                    var args = arguments;
+                    appInsights.queue.push(function () {
+                        appInsights[name].apply(appInsights, args);
+                    });
+                };
+            }
 
-        var t = { config: config },
-            u = document,
-            s = u.createElement("script"),
-            i;
+            var appInsights = { config: config };
+            appInsights.queue = [];
 
-        s.src = "https://js.monitor.azure.com/scripts/b/ai.3.gbl.min.js";
-        u.getElementsByTagName("head")[0].appendChild(s);
+            var methods = [
+                "trackEvent",
+                "trackPageView",
+                "trackException",
+                "trackTrace",
+                "trackMetric"
+            ];
 
-        t.queue = [];
+            for (var i = 0; i < methods.length; i++) {
+                createMethod(methods[i]);
+            }
 
-        for (
-            i = 0;
-            i < ["trackEvent", "trackPageView", "trackException", "trackTrace", "trackMetric"].length;
-            i++
-        ) {
-            r(["trackEvent", "trackPageView", "trackException", "trackTrace", "trackMetric"][i]);
-        }
+            var script = document.createElement("script");
+            script.src = "https://js.monitor.azure.com/scripts/b/ai.3.gbl.min.js";
+            script.async = true;
 
-        return t;
-    }({
-        connectionString: "InstrumentationKey=da38877b-8f01-4311-8e30-476bae1786d4;IngestionEndpoint=https://eastus-8.in.applicationinsights.azure.com/;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/;ApplicationId=7b559f12-0975-436d-88bc-978bdb5a4efc"
-    });
+            document.head.appendChild(script);
 
-    window.appInsights = appInsights;
+            return appInsights;
+        }({
+            connectionString: "InstrumentationKey=da38877b-8f01-4311-8e30-476bae1786d4;IngestionEndpoint=https://eastus-8.in.applicationinsights.azure.com/;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/;ApplicationId=7b559f12-0975-436d-88bc-978bdb5a4efc"
+        });
 
-    appInsights.trackPageView({
-        name: "Azure SRE Agent Demo"
-    });
+        window.appInsights = appInsights;
+
+        appInsights.trackPageView({
+            name: "Azure SRE Agent Demo"
+        });
     </script>
 
 </head>
@@ -88,7 +91,7 @@
 
     <div class="card">
         <h2>Architecture Flow</h2>
-        <pre>
+<pre>
 Developer
    ↓
 GitHub Repository
@@ -104,7 +107,7 @@ Azure Monitor
 Grafana Cloud
    ↓
 Azure SRE Agent
-        </pre>
+</pre>
     </div>
 
     <div class="card">
@@ -126,23 +129,23 @@ Azure SRE Agent
 <script src="app.js"></script>
 
 <script>
-if (window.appInsights) {
+    if (window.appInsights) {
 
-    appInsights.trackEvent({
-        name: "Deployment",
-        properties: {
-            version: "1.0.0",
-            environment: "Production",
-            platform: "Azure Static Web Apps",
-            sourceControl: "GitHub",
-            monitoring: "Application Insights"
-        }
-    });
+        appInsights.trackEvent({
+            name: "Deployment",
+            properties: {
+                version: "1.0.0",
+                environment: "Production",
+                platform: "Azure Static Web Apps",
+                sourceControl: "GitHub",
+                deploymentMethod: "GitHub Actions"
+            }
+        });
 
-    appInsights.trackTrace({
-        message: "Azure SRE Agent Demo Loaded"
-    });
-}
+        appInsights.trackTrace({
+            message: "Azure SRE Agent Demo Loaded"
+        });
+    }
 </script>
 
 </body>
